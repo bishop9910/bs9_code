@@ -71,7 +71,7 @@ def cut_filename(file_path:str) -> str:
         result += file_path.split("/")[i] + "/"
     return result
 
-def file_convert(original_path:str, target_path:str, code_number:int ,chunk_size:int=8192):
+def file_convert(original_path:str, target_path:str, code_number:int ,chunk_size:int=16384):
     try:
         file_size = os.path.getsize(original_path)
         

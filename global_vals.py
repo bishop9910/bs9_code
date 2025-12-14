@@ -1,15 +1,15 @@
-from data_form import data_0x1A5F
+from data_form import data_0x1A5F, data_0x9910
 from data_class import Data
 
-Textsuffix:list[str] = ['txt']
+Textsuffix:list[str] = ['txt', 'ini', 'js', 'html', 'css']
 
-version:str = "1.2.175"
+version:str = "1.2.180"
 
-date:str = "2025/8/18"
+date:str = "2025/12/14"
 
-data_obj:Data = Data(data_0x1A5F)
+data_obj:Data = Data(data_0x9910)
 
-coder_version:str = "data_0x1A5F"
+coder_version:str = "data_0x9910"
 
 bs9_header_info = f"bs9_{version}_"
 
