@@ -3,3 +3,4 @@
 /node_modules
 /build
 /assets
+__pycache__/

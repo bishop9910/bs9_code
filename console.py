@@ -1,3 +1,5 @@
+#code_super_console
+#python -m nuitka --onefile --show-memory --show-progress --enable-plugin=pyside6 --remove-output --windows-icon-from-ico=./console.ico console.py
 from bs9Unpack import bs9Unpack
 from decode_file import decode_file
 from header import compute_header
