@@ -1,11 +1,12 @@
-import numpy
 from rich import print
+from bs9_core import bishop9910_lib
 
-class Data():
-    def __init__(self, data:numpy.ndarray) -> None:
+class Data(bishop9910_lib):
+    def __init__(self, data:list[list[str]]) -> None:
+        super().__init__()
         self.data = data
 
-    def get_data(self) -> numpy.ndarray:
+    def get_data(self) -> list[list[str]]:
         return self.data
 
     def get_data_by_index(self, index:str) -> str:
@@ -16,22 +17,16 @@ class Data():
         else:
             index1 = int(index1)
             index2 = int(index2)
-        # print("Searching for index: ", index)
         if self.data[index1][index2]:
-            # print("Found")
             return self.data[index1][index2]
         else:
-            # print("Not found")
             return "not found"
         
     def get_data_by_value(self, value:str) -> str:
-        # print("Searching for value: ", value)
         for i in range(len(self.data)):
             for j in range(len(self.data[i])):
                 if self.data[i][j] == value:
-                    # print("Found")
                     return str(i)+str(j)
-        # print("Not found")
         return "not found"
     
     def show_data(self) -> None:

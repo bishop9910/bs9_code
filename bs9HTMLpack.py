@@ -29,13 +29,23 @@ def bs9HTMLpack(folder_path:str) -> str:
                             encode_file(file_path)
                             os.remove(file_path)
         bs9Unpack('./data.bs9pck')
-        src_file:str = "./data/launcher_9910.exe"
+        src_file:str = "./data/launcher.exe"
+        dll_filr:str = "./data/WebView2Loader.dll"
         dst_folder:str = folder_path
-        if os.path.exists(dst_folder + '/' + "launcher_9910.exe"):
-            os.remove(dst_folder + '/' + "launcher_9910.exe")
-            shutil.copy(src_file, dst_folder)
-        else:
-            shutil.copy(src_file, dst_folder)
+        dst_assets_dir = folder_path + '/' + "assets"
+        if os.path.exists(dst_folder + '/' + "launcher.exe") or os.path.exists(dst_folder + '/' + "WebView2Loader.dll") or os.path.exists(dst_assets_dir):
+            os.remove(dst_folder + '/' + "launcher.exe")
+            os.remove(dst_folder + '/' + "WebView2Loader.dll")
+            os.removedirs(dst_assets_dir)
+        os.makedirs(dst_assets_dir, exist_ok=True)
+        for item in os.listdir(folder_path):
+            src_item = os.path.join(folder_path, item)
+            if item in ["assets", "launcher.exe", "WebView2Loader.dll"]:
+                continue
+            dst_item = os.path.join(dst_assets_dir, item)
+            shutil.move(src_item, dst_item)
+        shutil.copy(src_file, dst_folder)
+        shutil.copy(dll_filr, dst_folder)
         zipf:zipfile.ZipFile = zipfile.ZipFile(folder_path + ".zip", 'w', zipfile.ZIP_DEFLATED)
         zipdir(folder_path, zipf)
         zipf.close()
@@ -58,9 +68,10 @@ def bs9HTMLpack(folder_path:str) -> str:
         insert_header_mmap(final_filename, bs9pck_header)
         delete_directory(folder_path)
         os.remove(ziped_file)
-        bs9DEFAULTpack('./data')
         print("[bold green]Pack Completed[/bold green]")
         return final_filename
     except Exception as e:
         print(f"[red]Error:[/red] [bold red]{e}[/bold red]")
         return ''
+    finally:
+        bs9DEFAULTpack('./data')

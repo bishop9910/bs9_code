@@ -1,6 +1,4 @@
 import os
-import sys
-import subprocess
 from tqdm import tqdm
 from decode_file import decode_file
 from methods import cut_filename, file_convert, unzip_file, copy_file
@@ -51,22 +49,18 @@ def bs9Unpack(file_path:str) -> None:
                 if filePath.split(".")[-1] == "bs9":
                     decode_file(filePath)
                     os.remove(filePath)
-                if filePath.split("/")[-1] == "launcher_9910.exe":
+                if filePath.split("/")[-1] == "launcher.exe":
                     launcher_file = filePath
             pbar.update(1)
-    if os.path.isfile(folder_path + filename + '/index.html'):
-        index_file = folder_path + filename + '/index.html'
-    elif os.path.isfile(folder_path + filename + '/index.htm'):
-        index_file = folder_path + filename + '/index.htm'
+    if os.path.isfile(folder_path + filename + '/assets/index.html'):
+        index_file = folder_path + filename + '/assets/index.html'
+    elif os.path.isfile(folder_path + filename + '/assets/index.htm'):
+        index_file = folder_path + filename + '/assets/index.htm'
     os.remove(ziped_file)
     os.remove(no_header_file_path)
     os.remove(file_path)
     if launcher_file != "" and index_file != "":
         print("[bold green]Unpack Completed[/bold green]")
-        try:
-            subprocess.run(["start", launcher_file], shell=True)
-            sys.exit(0)
-        except Exception as e:
-            print(f"[red]Error:[/red] [bold red]{e}[/bold red]")
+        print(f"[bold green]Use the launcher inside to launch the website. |file| {launcher_file}[/bold green]")
     else:
         print("[bold green]Unpack Completed[/bold green]")
