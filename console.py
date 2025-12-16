@@ -15,7 +15,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(f'code_{version}_csl.log', encoding='utf-8'),
+        logging.FileHandler(f'bs9_code_{version}_csl.log', encoding='utf-8'),
         logging.StreamHandler()
     ]
 )
