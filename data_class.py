@@ -1,7 +1,6 @@
 from rich import print
-from bs9_core import bishop9910_lib
 
-class Data(bishop9910_lib):
+class Data:
     def __init__(self, data:list[list[str]]) -> None:
         super().__init__()
         self.data = data
