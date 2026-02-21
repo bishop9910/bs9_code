@@ -1,4 +1,4 @@
-from global_vals import data_obj
+from global_vals import global_vals
 from rich import print
 from tqdm import tqdm
 
@@ -7,7 +7,7 @@ def encode(string:str)->str:
     output:str = ""
     with tqdm(total=len(string), desc="Encoding") as pbar:
         for i in string:
-            e:str = data_obj.get_data_by_value(i)
+            e:str = global_vals.data_obj.get_data_by_value(i)
             if e != 'not found':
                 output += e
             else:

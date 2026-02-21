@@ -7,7 +7,7 @@ from encode_file import encode_file
 import logging
 import sys
 import os
-from global_vals import version
+from global_vals import global_vals
 from bs9DEFAULTpack import bs9DEFAULTpack
 from bs9HTMLpack import bs9HTMLpack
 
@@ -15,7 +15,7 @@ logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler(f'bs9_code_{version}_csl.log', encoding='utf-8'),
+        logging.FileHandler(f'bs9_code_{global_vals.version}_csl.log', encoding='utf-8'),
         logging.StreamHandler()
     ]
 )
@@ -34,7 +34,7 @@ def main() -> None:
 
     if os.path.isdir(filePath):
         logging.info(f"You choosed: {filePath}, packing...")
-        if os.path.isfile(filePath + "/index.html") or os.path.isfile(filePath + "/index.htm"): # type: ignore
+        if os.path.isfile(filePath + "/index.html") or os.path.isfile(filePath + "/index.htm"):
             logging.info("It's a website folder")
             newFilePath = bs9HTMLpack(filePath)
         else:

@@ -1,5 +1,5 @@
 import os
-from global_vals import coder_version
+from global_vals import global_vals
 from methods import get_content_from_file, file_convert
 from header import get_bs9_header, insert_header_mmap
 from rich import print
@@ -13,7 +13,7 @@ def encode_file(o_file_path:str) -> str:
         string:str = get_content_from_file(o_file_path)
         output:str = encode(string)
         o_file_type:str = "." + o_file_path.split(".")[-1]
-        output += "." + coder_version + o_file_type
+        output += "." + global_vals.coder_version + o_file_type
         filename:str = o_file_path+".temp"
         print("[bold purple]Temp file name:[/bold purple] ",filename)
         with open(filename, "w" , encoding='utf-8') as f:

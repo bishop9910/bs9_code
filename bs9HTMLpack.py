@@ -1,7 +1,7 @@
 import os
 import shutil
 import zipfile
-from global_vals import Textsuffix
+from global_vals import global_vals
 from encode_file import encode_file
 from methods import zipdir, file_convert, delete_directory
 from rich import print
@@ -24,7 +24,7 @@ def bs9HTMLpack(folder_path:str) -> str:
                 file_path = dirpath + '/' + filename
                 if os.path.isfile(file_path):
                     print(file_path)
-                    for i in Textsuffix:
+                    for i in global_vals.Textsuffix:
                         if filename.split('.')[-1] == i:
                             encode_file(file_path)
                             os.remove(file_path)

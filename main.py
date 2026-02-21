@@ -13,7 +13,7 @@ from decode_file import decode_file
 from encode_file import encode_file
 from decode import decode
 from encode import encode
-from global_vals import version, date, data_obj
+from global_vals import global_vals
 
 
 app:QApplication = QApplication([])
@@ -21,7 +21,7 @@ app:QApplication = QApplication([])
 #main thread
 if __name__ == "__main__":
     while True:
-        print(f"[bold blue]Bs9 Encoder/Decoder[/bold blue] [white on red][[/white on red][white on blue]VERSION[/white on blue] {version} [green]{date}[/green][white on red]][/white on red] [green]by[/green] [white on purple]Bishop9910[/white on purple]")
+        print(f"[bold blue]Bs9 Encoder/Decoder[/bold blue] [white on red][[/white on red][white on blue]VERSION[/white on blue] {global_vals.version} [green]{global_vals.date}[/green][white on red]][/white on red] [green]by[/green] [white on purple]{global_vals.author}[/white on purple]")
         print("[blue]Enter the code[/blue] [white on red]([/white on red][bold red]0 for help,[/bold red][bold green]1 for encode text file,[/bold green][bold blue]2 for decode bs9 file,[/bold blue][bold purple]3 for show data,[/bold purple][bold red]4 for make bs9pack,[/bold red][bold green]5 for unpack bs9pack,[/bold green][bold blue]6 for encode texts,[/bold blue][bold red]7 for decode bs9 texts,[/bold red][bold green]8 for exit[/bold green][white on red])[/white on red]: ")
         code:str = input()
         if code == "0":
@@ -41,7 +41,7 @@ if __name__ == "__main__":
                 subprocess.run(["start", html_file_path], shell=True)
                 sys.exit(0)
         elif code == "3":
-            data_obj.show_data()
+            global_vals.data_obj.show_data()
         elif code == "4":
             folder_path = QFileDialog.getExistingDirectory(None,'Select the folder')
             if folder_path == "":

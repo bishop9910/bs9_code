@@ -1,4 +1,4 @@
-from global_vals import bs9_header_info, bs9pck_header_info
+from global_vals import global_vals
 import random
 import os
 import mmap
@@ -23,11 +23,11 @@ def header_maker(info: str) -> bytes:
     return header_str.encode('utf-8') + padding
 
 def get_bs9_header():
-    bs9_header = header_maker(bs9_header_info)
+    bs9_header = header_maker(global_vals.bs9_header_info)
     return bs9_header
 
 def get_bs9pck_header():
-    bs9pck_header = header_maker(bs9pck_header_info)
+    bs9pck_header = header_maker(global_vals.bs9pck_header_info)
     return bs9pck_header
 
 def compute_header(filePath:str) -> list[str]:

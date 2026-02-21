@@ -1,5 +1,5 @@
 import os
-from global_vals import coder_version, version
+from global_vals import global_vals
 from methods import file_convert, get_content_from_file, copy_file
 from header import compute_header, remove_header
 from rich import print
@@ -16,7 +16,7 @@ def decode_file(e_file_path:str) -> str:
             print("[red]Error:[/red] [bold red]Coded version too low, try a lower decoder to decode it.[/bold red]")
             return "Error"
         readedVersion = header[1]
-        if readedVersion != version:
+        if readedVersion != global_vals.version:
             print("[red]Error:[/red] [bold red]Coded file's version not supported.[/bold red]")
             return "Error"
         convert_code = int(header[3])
@@ -31,7 +31,7 @@ def decode_file(e_file_path:str) -> str:
         encoded_content:str = get_content_from_file(filename)
         content:str = encoded_content.split(".")[0]
         data_version:str = encoded_content.split(".")[1]
-        if(data_version != coder_version):
+        if(data_version != global_vals.coder_version):
             print("[red]Error:[/red] [bold red]The encoded content version is not as the same as the decoder's.[/bold red]")
             return "Error"
         e_file_type:str = "." + encoded_content.split(".")[2]

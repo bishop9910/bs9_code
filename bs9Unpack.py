@@ -4,7 +4,7 @@ from decode_file import decode_file
 from methods import cut_filename, file_convert, unzip_file, copy_file
 from header import compute_header, remove_header
 from rich import print
-from global_vals import version
+from global_vals import global_vals
 
 def bs9Unpack(file_path:str) -> None:
     filename:str = ""
@@ -14,7 +14,7 @@ def bs9Unpack(file_path:str) -> None:
         print("[red]Error:[/red] [bold red]Coded version too low, try a lower decoder to decode it.[/bold red]")
         return None
     readedVersion = header[1]
-    if readedVersion != version:
+    if readedVersion != global_vals.version:
         print("[red]Error:[/red] [bold red]Coded file's version not supported.[/bold red]")
         return None
     convert_code = int(header[3])
