@@ -10,6 +10,7 @@ from bs9Unpack import bs9Unpack
 from bs9DEFAULTpack import bs9DEFAULTpack
 
 def bs9HTMLpack(folder_path:str) -> str:
+    data_unpacked: bool = False
     print(folder_path)
     if os.path.exists("data.bs9pck"):
         print("[bold purple]Main data found[/bold purple]")
@@ -17,6 +18,9 @@ def bs9HTMLpack(folder_path:str) -> str:
         print("[red]Err:[/red] [bold red]Main data not found[/bold red]")
         return ''
     try:
+        dst_assets_dir = folder_path + '/' + "assets"
+        if os.path.exists(dst_assets_dir):
+            return bs9DEFAULTpack(folder_path)
         paths:object = os.walk(folder_path)
         for dirpath, _, filenames in paths:
             dirpath = dirpath.replace(os.sep,'/')
@@ -29,11 +33,11 @@ def bs9HTMLpack(folder_path:str) -> str:
                             encode_file(file_path)
                             os.remove(file_path)
         bs9Unpack('./data.bs9pck')
+        data_unpacked = True
         src_file:str = "./data/launcher.exe"
         dll_filr:str = "./data/WebView2Loader.dll"
         dst_folder:str = folder_path
-        dst_assets_dir = folder_path + '/' + "assets"
-        if os.path.exists(dst_folder + '/' + "launcher.exe") or os.path.exists(dst_folder + '/' + "WebView2Loader.dll") or os.path.exists(dst_assets_dir):
+        if os.path.exists(dst_folder + '/' + "launcher.exe") or os.path.exists(dst_folder + '/' + "WebView2Loader.dll"):
             os.remove(dst_folder + '/' + "launcher.exe")
             os.remove(dst_folder + '/' + "WebView2Loader.dll")
             os.removedirs(dst_assets_dir)
@@ -74,4 +78,5 @@ def bs9HTMLpack(folder_path:str) -> str:
         print(f"[red]Error:[/red] [bold red]{e}[/bold red]")
         return ''
     finally:
-        bs9DEFAULTpack('./data')
+        if data_unpacked:
+            bs9DEFAULTpack('./data')

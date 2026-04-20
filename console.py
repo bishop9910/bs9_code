@@ -21,19 +21,86 @@ logging.basicConfig(
 )
 
 def main() -> None:
-    filePath:str = ""
-    if len(sys.argv) != 1:
-        preFilePath = sys.argv[1]
-        filePath  = preFilePath.replace(os.sep, '/')
-    else:
-        logging.critical('Error: Not select a target file.')
-
-    if filePath == '' or filePath == None:
-        logging.critical('Error: Target file not allowed.')
+    if len(sys.argv) < 2:
+        logging.critical('Error: not enter any command.')
         sys.exit(1)
 
-    if os.path.isdir(filePath):
-        logging.info(f"You choosed: {filePath}, packing...")
+    command = sys.argv[1]
+
+    if command == "--version":
+        print(f"{global_vals.version}")
+    elif command == "encode":
+        filePath:str = ""
+        if len(sys.argv) < 3:
+            logging.critical('Error: no path entered.')
+            sys.exit(1)
+        else:
+            filePath = sys.argv[2].replace(os.sep, '/')
+        if filePath == '' or filePath == None:
+            logging.critical('Error: target file not allowed.')
+            sys.exit(1)
+
+        typeAllowed: bool = False
+        for t in global_vals.Textsuffix:
+            if t == filePath.split('.')[-1]:
+                typeAllowed = True
+
+        if not typeAllowed:
+            logging.critical('Error: target file not allowed.')
+            sys.exit(1)
+
+        logging.info(f"ENCODE COMMAND File: {filePath}, encoding...")
+        newFilePath = encode_file(filePath)
+        header = compute_header(newFilePath)
+        fileType = header[0]
+        readedVersion = header[1]
+        convert_ID = header[2]
+        convert_code = header[3]
+        logging.info(f"{fileType=}")
+        logging.info(f"{readedVersion=}")
+        logging.info(f"{convert_ID=}")
+        logging.info(f"{convert_code=}")
+        logging.info("Encode Completed")
+    elif command == "decode":
+        filePath:str = ""
+        if len(sys.argv) < 3:
+            logging.critical('Error: no path entered.')
+            sys.exit(1)
+        else:
+            filePath = sys.argv[2].replace(os.sep, '/')
+        if filePath == '' or filePath == None:
+            logging.critical('Error: target file not allowed.')
+            sys.exit(1)
+        if filePath.split('.')[-1] != 'bs9':
+            logging.critical('Error: target file not allowed.')
+            sys.exit(1)
+        logging.info(f"DECODE COMMAND File: {filePath}, decoding...")
+        header = compute_header(filePath)
+        fileType = header[0]
+        readedVersion = header[1]
+        convert_ID = header[2]
+        convert_code = header[3]
+        logging.info(f"{fileType=}")
+        logging.info(f"{readedVersion=}")
+        logging.info(f"{convert_ID=}")
+        logging.info(f"{convert_code=}")
+        decode_file(filePath)
+        os.remove(filePath)
+        logging.info("Decode Completed")
+    elif command == "pack":
+        filePath:str = ""
+        if len(sys.argv) < 3:
+            logging.critical('Error: no path entered.')
+            sys.exit(1)
+        else:
+            filePath = sys.argv[2].replace(os.sep, '/')
+        if filePath == '' or filePath == None:
+            logging.critical('Error: target path not allowed.')
+            sys.exit(1)
+        if not os.path.isdir(filePath):
+            logging.critical('Error: target path not allowed.')
+            sys.exit(1)
+        logging.info(f"PACK COMMAND File: {filePath}, packing...")
         if os.path.isfile(filePath + "/index.html") or os.path.isfile(filePath + "/index.htm"):
             logging.info("It's a website folder")
             newFilePath = bs9HTMLpack(filePath)
@@ -50,50 +117,35 @@ def main() -> None:
         logging.info(f"{convert_ID=}")
         logging.info(f"{convert_code=}")
         logging.info("Pack Completed")
-    else:
-        if filePath.split('.')[-1] == 'bs9':
-            logging.info(f"You choosed: {filePath}, decoding...")
-            header = compute_header(filePath)
-            fileType = header[0]
-            readedVersion = header[1]
-            convert_ID = header[2]
-            convert_code = header[3]
-            logging.info(f"{fileType=}")
-            logging.info(f"{readedVersion=}")
-            logging.info(f"{convert_ID=}")
-            logging.info(f"{convert_code=}")
-            decode_file(filePath)
-            os.remove(filePath)
-            logging.info("Decode Completed")
-        elif filePath.split('.')[-1] == 'bs9pck':
-            logging.info(f"You choosed: {filePath}, unpacking...")
-            header = compute_header(filePath)
-            fileType = header[0]
-            readedVersion = header[1]
-            convert_ID = header[2]
-            convert_code = header[3]
-            logging.info(f"{fileType=}")
-            logging.info(f"{readedVersion=}")
-            logging.info(f"{convert_ID=}")
-            logging.info(f"{convert_code=}")
-            bs9Unpack(filePath)
-            logging.info("Unpack Completed")
-        elif filePath.split('.')[-1] == 'txt':
-            logging.info(f"You choosed: {filePath}, encoding...")
-            newFilePath = encode_file(filePath)
-            header = compute_header(newFilePath)
-            fileType = header[0]
-            readedVersion = header[1]
-            convert_ID = header[2]
-            convert_code = header[3]
-            logging.info(f"{fileType=}")
-            logging.info(f"{readedVersion=}")
-            logging.info(f"{convert_ID=}")
-            logging.info(f"{convert_code=}")
-            logging.info("Encode Completed")
-        else:
-            logging.critical('Invalid target file...')
+    elif command == "unpack":
+        filePath:str = ""
+        if len(sys.argv) < 3:
+            logging.critical('Error: no path entered.')
             sys.exit(1)
+        else:
+            filePath = sys.argv[2].replace(os.sep, '/')
+        if filePath == '' or filePath == None:
+            logging.critical('Error: target file not allowed.')
+            sys.exit(1)
+        if filePath.split('.')[-1] != 'bs9pck':
+            logging.critical('Error: target file not allowed.')
+            sys.exit(1)
+        logging.info(f"UNPACK COMMAND File: {filePath}, unpacking...")
+        header = compute_header(filePath)
+        fileType = header[0]
+        readedVersion = header[1]
+        convert_ID = header[2]
+        convert_code = header[3]
+        logging.info(f"{fileType=}")
+        logging.info(f"{readedVersion=}")
+        logging.info(f"{convert_ID=}")
+        logging.info(f"{convert_code=}")
+        bs9Unpack(filePath)
+        logging.info("Unpack Completed")
+    else:
+        logging.critical('Error: unkown command.')
+        sys.exit(1)
+
 
 if __name__ == "__main__":
     main()
