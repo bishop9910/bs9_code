@@ -10,6 +10,7 @@ import os
 from global_vals import global_vals
 from bs9DEFAULTpack import bs9DEFAULTpack
 from bs9HTMLpack import bs9HTMLpack
+from rich import print
 
 logging.basicConfig(
     level=logging.INFO,
@@ -21,14 +22,16 @@ logging.basicConfig(
 )
 
 def main() -> None:
+    print(f"[bold blue]Bs9 Encoder/Decoder[/bold blue] [white on red][[/white on red][white on blue]VERSION[/white on blue] {global_vals.version} [green]{global_vals.date}[/green][white on red]][/white on red] [green]by[/green] [white on purple]{global_vals.author}[/white on purple]")
     if len(sys.argv) < 2:
+        print(f"[blue]Usage:[/blue] [bold red]{sys.argv[0]}[/bold red] [bold blue]<pack|unpack|encode|decode>[/bold blue] [bold green]<input>[/bold green]")
         logging.critical('Error: not enter any command.')
         sys.exit(1)
 
     command = sys.argv[1]
 
     if command == "--version":
-        print(f"{global_vals.version}")
+        print(f"Version: {global_vals.version}")
     elif command == "encode":
         filePath:str = ""
         if len(sys.argv) < 3:
