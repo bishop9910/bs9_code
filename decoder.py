@@ -40,6 +40,7 @@ def main() -> None:
         if code == "1":
             path = _pick_open("Select the file", BS9_FILTER)
             if not path:
+                error("No file selected.")
                 continue
             try:
                 new_name = decode_file(path)
