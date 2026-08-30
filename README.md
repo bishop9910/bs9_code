@@ -4,6 +4,29 @@
 
 ---
 
+## 项目结构（重构后）
+
+核心逻辑统一放在 `bs9/` 包内，四个可执行入口都是它的薄封装：
+
+- `bs9/` — 库：常量、字符表/编解码、文件头、IO、打包、CLI 解析。
+- `main.py` — 交互式菜单（带文件选择框）。
+- `decoder.py` — 仅解码的交互式菜单。
+- `console.py` — 纯命令行入口（argparse 子命令）。
+- `bs9FileInfoReader.py` — 查看 `.bs9` / `.bs9pck` 文件头信息。
+
+### 命令行用法（console.py）
+
+```text
+bs9 encode <file>         将文本文件编码为 .bs9
+bs9 decode <file>         解码 .bs9（默认删除源文件，--keep 保留）
+bs9 pack <folder>         打包文件夹为 .bs9pck（默认删除源文件夹，--keep 保留）
+bs9 unpack <file>         解包 .bs9pck（默认删除源文件，--keep 保留）
+bs9 info <file>           查看文件头信息
+bs9 --version             显示版本
+```
+
+---
+
 ## 功能列表
 
 | 编号 | 功能名               | 说明 |

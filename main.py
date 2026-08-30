@@ -1,78 +1,127 @@
 #code_super
 #python -m nuitka --onefile --show-memory --show-progress --enable-plugin=pyside6 --remove-output --windows-icon-from-ico=./main.ico main.py
+"""Interactive encoder/decoder menu (GUI file pickers).
+
+Thin entry point; all format logic lives in the :mod:`bs9` package.
+"""
+
 import os
 import subprocess
 import sys
+
 from rich import print
-from PySide6.QtWidgets import QApplication,QFileDialog
-from bs9Help import printHelp
-from bs9DEFAULTpack import bs9DEFAULTpack
-from bs9HTMLpack import bs9HTMLpack
-from bs9Unpack import bs9Unpack
-from decode_file import decode_file
-from encode_file import encode_file
-from decode import decode
-from encode import encode
-from global_vals import global_vals
+from PySide6.QtWidgets import QApplication, QFileDialog
+
+from bs9 import default_codec, decode_file, encode_file, pack, unpack
+from bs9.errors import Bs9Error
+from bs9.ui import banner, error, menu_help
+
+TEXT_FILTER = (
+    "Text files (*.txt);;HTML files (*.html);;Javascript files (*.js);;"
+    "Ini files (*.ini);;Toml files (*.toml);;JSON files (*.json);;All files (*)"
+)
+BS9_FILTER = "bishop9910 files (*.bs9);;All files (*)"
+BS9PCK_FILTER = "bishop9910 package files (*.bs9pck);;All files (*)"
 
 
-app:QApplication = QApplication([])
+def _pick_open(title: str, filters: str) -> str:
+    path, _ = QFileDialog.getOpenFileName(None, title, "", filters)
+    return path.replace(os.sep, "/") if path else ""
 
-#main thread
-if __name__ == "__main__":
+
+def _pick_folder(title: str) -> str:
+    path = QFileDialog.getExistingDirectory(None, title)
+    return path.replace(os.sep, "/") if path else ""
+
+
+def main() -> None:
+    banner()
     while True:
-        print(f"[bold blue]Bs9 Encoder/Decoder[/bold blue] [white on red][[/white on red][white on blue]VERSION[/white on blue] {global_vals.version} [green]{global_vals.date}[/green][white on red]][/white on red] [green]by[/green] [white on purple]{global_vals.author}[/white on purple]")
-        print("[blue]Enter the code[/blue] [white on red]([/white on red][bold red]0 for help,[/bold red][bold green]1 for encode text file,[/bold green][bold blue]2 for decode bs9 file,[/bold blue][bold purple]3 for show data,[/bold purple][bold red]4 for make bs9pack,[/bold red][bold green]5 for unpack bs9pack,[/bold green][bold blue]6 for encode texts,[/bold blue][bold red]7 for decode bs9 texts,[/bold red][bold green]8 for exit[/bold green][white on red])[/white on red]: ")
-        code:str = input()
+        print(
+            "[blue]Enter the code[/blue] [white on red]([/white on red]"
+            "[bold red]0 for help,[/bold red]"
+            "[bold green]1 for encode text file,[/bold green]"
+            "[bold blue]2 for decode bs9 file,[/bold blue]"
+            "[bold purple]3 for show data,[/bold purple]"
+            "[bold red]4 for make bs9pack,[/bold red]"
+            "[bold green]5 for unpack bs9pack,[/bold green]"
+            "[bold blue]6 for encode texts,[/bold blue]"
+            "[bold red]7 for decode bs9 texts,[/bold red]"
+            "[bold green]8 for exit[/bold green][white on red])[/white on red]: "
+        )
+        try:
+            code = input()
+        except (EOFError, KeyboardInterrupt):
+            print()
+            sys.exit(0)
+
         if code == "0":
-            printHelp()
+            menu_help()
+
         elif code == "1":
-            o_file_path,_ = QFileDialog.getOpenFileName(None,"Select the file",'',"Text files (*.txt);;HTML files (*.html);;Javascript files (*.js);;Ini files (*.ini);;Toml files (*.toml);;JSON files (*.json);;All files (*)")
-            rel_o_path = o_file_path.replace(os.sep, '/')
-            encode_file(rel_o_path)
+            path = _pick_open("Select the file", TEXT_FILTER)
+            if not path:
+                error("No file selected.")
+                continue
+            try:
+                encode_file(path)
+            except Bs9Error as exc:
+                error(str(exc))
+
         elif code == "2":
-            e_file_path,_ = QFileDialog.getOpenFileName(None,"Select the file",'',"bishop9910 files (*.bs9);;All files (*)")
-            rel_e_path = e_file_path.replace(os.sep, '/')
-            new_filename:str = decode_file(rel_e_path)
-            if new_filename == "Error":
+            path = _pick_open("Select the file", BS9_FILTER)
+            if not path:
+                error("No file selected.")
                 continue
-            if(new_filename.split(".")[-1] == "html" or new_filename.split(".")[-1] == "htm"):
-                html_file_path:str = new_filename
-                subprocess.run(["start", html_file_path], shell=True)
+            try:
+                new_name = decode_file(path)
+            except Bs9Error as exc:
+                error(str(exc))
+                continue
+            if os.path.splitext(new_name)[1].lstrip(".") in ("html", "htm"):
+                subprocess.run(["start", new_name], shell=True)
                 sys.exit(0)
+
         elif code == "3":
-            global_vals.data_obj.show_data()
+            default_codec.show_data()
+
         elif code == "4":
-            folder_path = QFileDialog.getExistingDirectory(None,'Select the folder')
-            if folder_path == "":
-                print("[red]Error:[/red] [bold red]No folder selected.[/bold red]")
+            folder = _pick_folder("Select the folder")
+            if not folder:
+                error("No folder selected.")
                 continue
-            rel_folder_path = folder_path.replace(os.sep, '/')
-            print(f"[blue]You choosed:[/blue] {rel_folder_path}[green], packing...[/green]")
-            if os.path.isfile(rel_folder_path + "/index.html") or os.path.isfile(rel_folder_path + "/index.htm"):
-                print("[purple]It's a website folder[/purple]")
-                bs9HTMLpack(rel_folder_path)
-            else:
-                print("[purple]It's a normal folder[/purple]")
-                bs9DEFAULTpack(rel_folder_path)
+            print(f"[blue]You choosed:[/blue] {folder}[green], packing...[/green]")
+            try:
+                pack(folder)
+            except Bs9Error as exc:
+                error(str(exc))
+
         elif code == "5":
-            file_path,_ = QFileDialog.getOpenFileName(None,"Select the file",'',"bishop9910 package files (*.bs9pck);;All files (*)")
-            if file_path == "":
-                print("[red]Error:[/red] [bold red]No file selected.[/bold red]")
+            path = _pick_open("Select the file", BS9PCK_FILTER)
+            if not path:
+                error("No file selected.")
                 continue
-            rel_file_path = file_path.replace(os.sep, '/')
-            bs9Unpack(rel_file_path)
+            try:
+                unpack(path)
+            except Bs9Error as exc:
+                error(str(exc))
+
         elif code == "6":
             print("[blue]Enter the text you want to encode:[/blue]")
-            text:str = input()
-            output = encode(text)
-            print(output)
+            print(default_codec.encode(input()))
+
         elif code == "7":
             print("[blue]Enter the text which is encoded by this version's encoder:[/blue]")
-            text:str = input()
-            output = decode(text)
-            print(output)
+            print(default_codec.decode(input()))
+
         elif code == "8":
             sys.exit(0)
+
         else:
-            print("[red]Error:[/red] [bold red]Invalid input.[/bold red]")
+            error("Invalid input.")
+
+
+app: QApplication = QApplication([])
+
+if __name__ == "__main__":
+    main()
